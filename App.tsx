@@ -264,29 +264,35 @@ export default function App() {
               <span className="text-white font-bold">24/7</span> giúp bạn gỡ bỏ gánh nặng vận hành.
             </p>
 
-            <CTAButton text="Đặt lịch tư vấn miễn phí" onClick={scrollToFinal} />
+            <div className="hidden md:block">
+              <CTAButton text="Đặt lịch tư vấn miễn phí" onClick={scrollToFinal} />
+            </div>
           </div>
 
           {/* RIGHT: VIDEO */}
+{/* RIGHT: VIDEO */}
 <div className="relative">
-  {/* Lớp hiệu ứng Glow phía sau */}
+  {/* Glow */}
   <div className="absolute inset-0 bg-[#d4af37]/20 blur-3xl rounded-full"></div>
 
-  {/* Khung chứa Video */}
+  {/* VIDEO CONTAINER */}
   <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-800">
-<div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-800">
-<video
-  className="w-full h-full object-cover"
-  src="https://res.cloudinary.com/dwlwf7amq/video/upload/v1773389747/Final_arihbm.mp4"
-  autoPlay
-  muted
-  loop
-  playsInline
-  controls
-/>
+    <video
+      className="w-full h-full object-cover"
+      src="https://res.cloudinary.com/dwlwf7amq/video/upload/v1773389747/Final_arihbm.mp4"
+      autoPlay
+      muted
+      loop
+      playsInline
+      controls
+    />
+  </div>
+
+  {/* CTA chỉ hiện trên mobile */}
+  <div className="mt-8 md:hidden">
+    <CTAButton text="Đặt lịch tư vấn miễn phí" onClick={scrollToFinal} />
+  </div>
 </div>
-  </div>
-  </div>
 </div>
       </Section>
 
