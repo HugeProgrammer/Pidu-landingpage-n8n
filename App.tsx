@@ -275,15 +275,15 @@ export default function App() {
   {/* Khung chứa Video */}
   <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-800">
 <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-gray-800">
-  <iframe
-    className="w-full h-full object-cover"
-    /* CHÚ Ý: Đã đổi chữ controls=0 thành controls=1 để HIỆN THANH TUA VIDEO */
-    src="https://res.cloudinary.com/dwlwf7amq/video/upload/v1773389747/Final_arihbm.mp4"
-    title="YouTube video player"
-    frameBorder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
-  ></iframe>
+<video
+  className="w-full h-full object-cover"
+  src="https://res.cloudinary.com/dwlwf7amq/video/upload/v1773389747/Final_arihbm.mp4"
+  autoPlay
+  muted
+  loop
+  playsInline
+  controls
+/>
 </div>
   </div>
   </div>
