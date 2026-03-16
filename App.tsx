@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+// Thêm dòng này vào phần import
+import Chatbot from './Chatbot';
 import { 
   CheckCircle, 
   Clock, 
@@ -628,6 +630,7 @@ export default function App() {
           <p className="text-gray-600 text-xs">&copy; {new Date().getFullYear()} PiduDigital. Chuyên gia tự động hóa doanh nghiệp Việt.</p>
         </div>
       </footer>
+      <Chatbot />
     </div>
   );
 }
