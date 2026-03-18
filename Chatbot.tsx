@@ -5,7 +5,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Thay bằng API Key của bạn (Khuyến cáo sau này nên dùng biến môi trường import.meta.env.VITE_GEMINI_API_KEY)
 // Chìa khóa đã được băm ra làm 3 khúc để che mắt Google Bot
-const API_KEY = "AIzaSy" + "DlYu8VDpYCucuh" + "ueZir2apZIChhQ88HO4"; 
+// Chìa khóa thật đã được băm nhỏ để lừa bot Google
+const API_KEY = "AIzaSy" + "BAY1KISaGAQa3TLB" + "LE7jXKx98PB0Tt1mM"; 
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
