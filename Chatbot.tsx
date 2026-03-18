@@ -1,9 +1,10 @@
+/// <reference types="vite/client" />
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Thay bằng API Key của bạn (Khuyến cáo sau này nên dùng biến môi trường import.meta.env.VITE_GEMINI_API_KEY)
-const API_KEY = "AIzaSyAhKpxqb0HkVfbC9Pbq7NpW9kvmF4UpmDQ"; 
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY
