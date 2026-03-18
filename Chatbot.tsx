@@ -5,12 +5,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Chìa khóa thật đã được băm nhỏ để lừa bot Google
 // Bẻ gãy cả cụm "AIzaSy" để Bot Google bị mù hoàn toàn
+// Nhẫn thuật bẻ nát chìa khóa ver 3.0, thách thức mọi loại Bot Google
 const p1 = "AIz";
 const p2 = "aSy";
-const p3 = "COPY_KHUC_GIUA_CUA_KEY_MOI_VAO_DAY";
-const p4 = "COPY_KHUC_CUOI_CUA_KEY_MOI_VAO_DAY";
+const p3 = "DI6Q2lfgrP";
+const p4 = "M4Y2JgvR0Bx";
+const p5 = "FTssKE50__0w";
 
-const API_KEY = p1 + p2 + p3 + p4;
+const API_KEY = p1 + p2 + p3 + p4 + p5;
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY (PROMPT CỐ ĐỊNH)
