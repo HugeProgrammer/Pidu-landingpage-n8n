@@ -3,7 +3,7 @@ import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Thay bằng API Key của bạn (Khuyến cáo sau này nên dùng biến môi trường import.meta.env.VITE_GEMINI_API_KEY)
-const API_KEY = "AIzaSyC3lmM7E6wdE5pl_LpJTP7N1Yj1-lqSMcc"; 
+const API_KEY = "AIzaSyBPdjN8_j_dHiXz_ZzSJ3GtGLKsuKwR8lQ"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY
@@ -53,20 +53,57 @@ export default function Chatbot() {
   const chatRef = useRef<any>(null); // Lưu trữ lịch sử chat để Gemini nhớ context
 
   // Khởi tạo Chat Session
+// Khởi tạo Chat Session (Đã fix lỗi lịch sử và nạp Google Docs)
   useEffect(() => {
-    chatRef.current = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: "Hello" }],
-        },
-        {
-          role: "model",
-          parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital." }],
-        },
-      ],
-    });
-  }, []);
+    const initChat = async () => {
+      try {
+        // 1. LINK API GOOGLE DOCS
+        const DOCS_API_URL = "https://script.google.com/macros/s/AKfycbxJ_qc6aUH8g3SKMOdMyr3ibUI3MvWXucXNy98yTJg3LVeKYNW8LP_Tmf94Ch-MZ1n4cw/exec";
+        
+        // 2. Tải nội dung từ file Google Docs về
+        const res = await fetch(DOCS_API_URL);
+        const data = await res.json();
+        
+        // 3. Ghép Prompt cố định với Kiến thức từ Docs
+        const combinedInstruction = SYSTEM_INSTRUCTION + 
+          "\n\n=== DỮ LIỆU KIẾN THỨC TỪ GOOGLE DOCS (Dùng để trả lời khách) ===\n" + 
+          (data.knowledge || "Chưa có thông tin");
+
+        // 4. Khởi tạo lại Model với bộ não mới
+        const dynamicModel = genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          systemInstruction: combinedInstruction,
+        });
+
+        // 5. 👇 SỬA LỖI TẠI ĐÂY: Ép lịch sử mồi phải có câu của User trước
+        const defaultHistory = [
+          { role: "user", parts: [{ text: "Hello" }] },
+          { role: "model", parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital. Mình có thể giúp gì cho doanh nghiệp của bạn hôm nay?" }] }
+        ];
+
+        // 6. Bắt đầu phiên chat
+        chatRef.current = dynamicModel.startChat({
+          history: defaultHistory,
+        });
+        
+        console.log("✅ Đã nạp thành công kiến thức từ Google Docs vào não AI!");
+
+      } catch (error) {
+        console.error("❌ Lỗi khi đọc Google Docs:", error);
+        
+        // Nếu lỗi mạng, khởi tạo bằng não mặc định (cũng phải dùng lịch sử mồi)
+        const defaultHistory = [
+          { role: "user", parts: [{ text: "Hello" }] },
+          { role: "model", parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital." }] }
+        ];
+        chatRef.current = model.startChat({
+           history: defaultHistory
+        });
+      }
+    };
+
+    initChat();
+  }, []); // Chỉ chạy 1 lần khi load trang
 
   // Tự động cuộn xuống tin nhắn mới nhất
   useEffect(() => {
