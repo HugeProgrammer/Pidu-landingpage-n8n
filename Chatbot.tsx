@@ -77,17 +77,6 @@ Khi khách nói nhu cầu:
 
 Bước 2.1 – Giới thiệu:
 (Dùng nội dung giải pháp phù hợp)
-
-Bước 2.2 – CHỈ hỏi 1 câu:
-"Dạ để em tư vấn sát hơn, anh/chị đang muốn AI hỗ trợ cụ thể phần nào ạ?"
-
-👉 Lấy "request"
-
-⚠️ KHÔNG hỏi nhiều câu dạng:
-- ngành gì (nếu đã có)
-- kênh nào
-- bao nhiêu bài/ngày
-
 --------------------
 BƯỚC 3 – XIN LIÊN HỆ
 --------------------
@@ -156,7 +145,7 @@ const model = genAI.getGenerativeModel({
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
-      { role: 'model', text: `Chào bạn 👋\nMình là trợ lý AI của PiduDigital. Mình có thể giúp doanh nghiệp tự động hóa nhiều công việc như trả lời khách hàng, đăng bài, chăm sóc đánh giá và đặt lịch hẹn.\n\nĐể mình tư vấn đúng giải pháp cho bạn, bạn đang quan tâm đến phần nào nhất?\n1️⃣ Tự động trả lời tin nhắn khách hàng (Messenger, Zalo...)\n2️⃣ AI tạo nội dung và tự đăng bài cho fanpage\n3️⃣ Tự động trả lời đánh giá trên Google Maps\n4️⃣ Tự động đặt lịch hẹn với khách hàng\n5️⃣ Tìm hiểu tổng thể giải pháp AI cho doanh nghiệp\n\nBạn chỉ cần chọn số hoặc nói nhu cầu của bạn, mình sẽ giải thích chi tiết và gửi demo phù hợp nhé.` }
+      { role: 'model', text: `Chào bạn 👋\nMình là trợ lý AI của PiduDigital. Mình có thể giúp doanh nghiệp tự động hóa nhiều công việc như trả lời khách hàng, đăng bài, chăm sóc đánh giá và đặt lịch hẹn.\n\nĐể mình tư vấn đúng giải pháp cho bạn, bạn đang quan tâm đến phần nào nhất?\n1️⃣ Tự động trả lời tin nhắn khách hàng (Messenger, Zalo...)\n2️⃣ AI tạo nội dung và tự đăng bài cho fanpage\n3️⃣ Tự động trả lời đánh giá trên Google Maps\n4️⃣ Tự động đặt lịch hẹn với khách hàng\n5️⃣ Tìm hiểu tổng thể giải pháp AI cho doanh nghiệp\n\nAnh/Chị đang quan tâm đến dịch vụ nào để em có thể giải thích chi tiết hơn?` }
     ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
