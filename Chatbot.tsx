@@ -3,7 +3,7 @@ import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Thay bằng API Key của bạn (Khuyến cáo sau này nên dùng biến môi trường import.meta.env.VITE_GEMINI_API_KEY)
-const API_KEY = "AIzaSyBPdjN8_j_dHiXz_ZzSJ3GtGLKsuKwR8lQ"; 
+const API_KEY = "AIzaSyAhKpxqb0HkVfbC9Pbq7NpW9kvmF4UpmDQ"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY
@@ -45,8 +45,18 @@ const model = genAI.getGenerativeModel({
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
-    { role: 'model', text: 'Chào bạn! Mình là trợ lý AI của PiduDigital. Mình có thể giúp gì cho doanh nghiệp của bạn hôm nay?' }
-  ]);
+      { role: 'model', text: `Chào bạn 👋
+  Mình là trợ lý AI của PiduDigital. Mình có thể giúp doanh nghiệp tự động hóa nhiều công việc như trả lời khách hàng, đăng bài, chăm sóc đánh giá và đặt lịch hẹn.
+
+  Để mình tư vấn đúng giải pháp cho bạn, bạn đang quan tâm đến phần nào nhất?
+  1️⃣ Tự động trả lời tin nhắn khách hàng (Messenger, Zalo...)
+  2️⃣ AI tạo nội dung và tự đăng bài cho fanpage
+  3️⃣ Tự động trả lời đánh giá trên Google Maps
+  4️⃣ Tự động đặt lịch hẹn với khách hàng
+  5️⃣ Tìm hiểu tổng thể giải pháp AI cho doanh nghiệp
+
+  Bạn chỉ cần chọn số hoặc nói nhu cầu của bạn, mình sẽ giải thích chi tiết và gửi demo phù hợp nhé.` }
+    ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -56,7 +66,7 @@ export default function Chatbot() {
     const initChat = async () => {
       try {
         // 1. LINK API GOOGLE DOCS
-        const DOCS_API_URL = "https://script.google.com/macros/s/AKfycbxJ_qc6aUH8g3SKMOdMyr3ibUI3MvWXucXNy98yTJg3LVeKYNW8LP_Tmf94Ch-MZ1n4cw/exec";
+        const DOCS_API_URL = "https://script.google.com/macros/s/AKfycbwiw87cBlSA4BmWQ5GpcUHtn-w0NrYT9pwVpCywNNyePgl6H_FbVOfOjLmtLXwLVkufJw/exec";
         
         const res = await fetch(DOCS_API_URL);
         const data = await res.json();
