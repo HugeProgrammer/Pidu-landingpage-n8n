@@ -3,14 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Thay bằng API Key của bạn (Khuyến cáo sau này nên dùng biến môi trường import.meta.env.VITE_GEMINI_API_KEY)
-// Chìa khóa đã được băm ra làm 3 khúc để che mắt Google Bot
 // Chìa khóa thật đã được băm nhỏ để lừa bot Google
 const API_KEY = "AIzaSy" + "BAY1KISaGAQa3TLB" + "LE7jXKx98PB0Tt1mM"; 
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY
+// 1. DATA VÀ PROMPT CỦA BẠN ĐẶT Ở ĐÂY (PROMPT CỐ ĐỊNH)
 const SYSTEM_INSTRUCTION = `
 Bạn là trợ lý ảo AI cao cấp của PiduDigital - Chuyên gia tự động hóa doanh nghiệp Việt.
 Thông tin về PiduDigital:
@@ -44,6 +42,7 @@ QUY TẮC XƯNG HÔ
 LƯU Ý: Tuyệt đối KHÔNG xuất ra mã [SAVE_LEAD...] nếu vướng bất kỳ thông tin nào trong 4 mục trên. Hãy kiên nhẫn hỏi cho đến khi đủ.
 `;
 
+// 2. KHỞI TẠO MODEL VỚI PROMPT CỐ ĐỊNH
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",
   systemInstruction: SYSTEM_INSTRUCTION,
@@ -52,71 +51,24 @@ const model = genAI.getGenerativeModel({
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
-      { role: 'model', text: `Chào bạn 👋
-  Mình là trợ lý AI của PiduDigital. Mình có thể giúp doanh nghiệp tự động hóa nhiều công việc như trả lời khách hàng, đăng bài, chăm sóc đánh giá và đặt lịch hẹn.
-
-  Để mình tư vấn đúng giải pháp cho bạn, bạn đang quan tâm đến phần nào nhất?
-  1️⃣ Tự động trả lời tin nhắn khách hàng (Messenger, Zalo...)
-  2️⃣ AI tạo nội dung và tự đăng bài cho fanpage
-  3️⃣ Tự động trả lời đánh giá trên Google Maps
-  4️⃣ Tự động đặt lịch hẹn với khách hàng
-  5️⃣ Tìm hiểu tổng thể giải pháp AI cho doanh nghiệp
-
-  Bạn chỉ cần chọn số hoặc nói nhu cầu của bạn, mình sẽ giải thích chi tiết và gửi demo phù hợp nhé.` }
+      { role: 'model', text: `Chào bạn 👋\nMình là trợ lý AI của PiduDigital. Mình có thể giúp doanh nghiệp tự động hóa nhiều công việc như trả lời khách hàng, đăng bài, chăm sóc đánh giá và đặt lịch hẹn.\n\nĐể mình tư vấn đúng giải pháp cho bạn, bạn đang quan tâm đến phần nào nhất?\n1️⃣ Tự động trả lời tin nhắn khách hàng (Messenger, Zalo...)\n2️⃣ AI tạo nội dung và tự đăng bài cho fanpage\n3️⃣ Tự động trả lời đánh giá trên Google Maps\n4️⃣ Tự động đặt lịch hẹn với khách hàng\n5️⃣ Tìm hiểu tổng thể giải pháp AI cho doanh nghiệp\n\nBạn chỉ cần chọn số hoặc nói nhu cầu của bạn, mình sẽ giải thích chi tiết và gửi demo phù hợp nhé.` }
     ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatRef = useRef<any>(null); // Lưu trữ lịch sử chat để Gemini nhớ context
+  const chatRef = useRef<any>(null);
 
+  // 3. KHỞI TẠO PHIÊN CHAT KHÔNG CẦN FETCH DOCS
   useEffect(() => {
-    const initChat = async () => {
-      try {
-        // 1. LINK API GOOGLE DOCS
-        const DOCS_API_URL = "https://script.google.com/macros/s/AKfycbwiw87cBlSA4BmWQ5GpcUHtn-w0NrYT9pwVpCywNNyePgl6H_FbVOfOjLmtLXwLVkufJw/exec";
-        
-        const res = await fetch(DOCS_API_URL);
-        const data = await res.json();
-        
-        // 3. Ghép Prompt cố định với Kiến thức từ Docs
-        const combinedInstruction = SYSTEM_INSTRUCTION + 
-          "\n\n=== DỮ LIỆU KIẾN THỨC TỪ GOOGLE DOCS (Dùng để trả lời khách) ===\n" + 
-          (data.knowledge || "Chưa có thông tin");
-
-        // 4. Khởi tạo lại Model với bộ não mới
-        const dynamicModel = genAI.getGenerativeModel({
-          model: "gemini-2.5-flash",
-          systemInstruction: combinedInstruction,
-        });
-
-        // 5. 👇 SỬA LỖI TẠI ĐÂY: Ép lịch sử mồi phải có câu của User trước
-        const defaultHistory = [
-          { role: "user", parts: [{ text: "Hello" }] },
-          { role: "model", parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital. Mình có thể giúp gì cho doanh nghiệp của bạn hôm nay?" }] }
-        ];
-
-        // 6. Bắt đầu phiên chat
-        chatRef.current = dynamicModel.startChat({
-          history: defaultHistory,
-        });
-        
-        console.log("✅ Đã nạp thành công kiến thức từ Google Docs vào não AI!");
-
-      } catch (error) {
-        console.error("❌ Lỗi khi đọc Google Docs:", error);
-        
-        // Nếu lỗi mạng, khởi tạo bằng não mặc định (cũng phải dùng lịch sử mồi)
-        const defaultHistory = [
-          { role: "user", parts: [{ text: "Hello" }] },
-          { role: "model", parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital." }] }
-        ];
-        chatRef.current = model.startChat({
-           history: defaultHistory
-        });
-      }
-    };
-
-    initChat();
+    // Ép lịch sử mồi phải có câu của User trước để tránh lỗi Gemini
+    const defaultHistory = [
+      { role: "user", parts: [{ text: "Hello" }] },
+      { role: "model", parts: [{ text: "Chào bạn! Mình là trợ lý AI của PiduDigital. Mình có thể giúp gì cho doanh nghiệp của bạn hôm nay?" }] }
+    ];
+    
+    chatRef.current = model.startChat({
+       history: defaultHistory
+    });
   }, []); // Chỉ chạy 1 lần khi load trang
 
   // Tự động cuộn xuống tin nhắn mới nhất
@@ -124,7 +76,7 @@ export default function Chatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
-const handleSend = async (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
@@ -134,34 +86,27 @@ const handleSend = async (e: React.FormEvent) => {
     setIsLoading(true);
 
     try {
-      // 1. Gửi tin nhắn cho AI
+      // Gửi tin nhắn cho AI
       const result = await chatRef.current.sendMessage(userText);
       let responseText = result.response.text();
 
-      // 2. Kiểm tra xem AI có xuất ra đoạn mã chốt sale [SAVE_LEAD: ...] không
-      const leadRegex = /\[SAVE_LEAD:\s*(\{.*?\})\s*\]/;
-      const match = responseText.match(leadRegex);
-// IN RA XEM AI NHẢ CÁI GÌ
       console.log("AI TRẢ VỀ:", responseText);
 
-      // 2. CÁCH BẮT MÃ MỚI BẰNG INDEXOF (Chính xác 100%)
+      // Xử lý chốt Lead
       const startIdx = responseText.indexOf("[SAVE_LEAD:");
       
       if (startIdx !== -1) {
         const endIdx = responseText.indexOf("]", startIdx);
         
         if (endIdx !== -1) {
-          // Lấy nguyên cục [SAVE_LEAD: {"name":"...", "phone":"..."}]
           const leadString = responseText.substring(startIdx, endIdx + 1);
-          
-          // Lấy phần JSON ở bên trong: {"name":"...", "phone":"..."}
           const jsonString = leadString.replace("[SAVE_LEAD:", "").replace("]", "").trim();
           
           try {
             const leadData = JSON.parse(jsonString);
             console.log("ĐÃ BẮT ĐƯỢC THÔNG TIN:", leadData);
             
-            // 3. GỌI API GỬI LÊN GOOGLE SHEETS
+            // GỌI API GỬI LÊN GOOGLE SHEETS
             const scriptUrl = "https://script.google.com/macros/s/AKfycbwDB3RnDUVoDC6Jt67ML-qVnAQl7H3_8UuuAVIHZtviXzHUJ4wSPUTZjnHWUw0jXJPOfg/exec"; 
             
             fetch(scriptUrl, {
@@ -175,7 +120,7 @@ const handleSend = async (e: React.FormEvent) => {
             .then(() => console.log("✅ Đã gửi lệnh lên Google Sheets!"))
             .catch(err => console.error("❌ Lỗi mạng:", err));
 
-            // 4. Cắt bỏ đoạn mã đó ra khỏi tin nhắn hiển thị cho khách
+            // Cắt bỏ đoạn mã đó ra khỏi tin nhắn hiển thị cho khách
             responseText = responseText.replace(leadString, "").trim();
 
           } catch (parseError) {
@@ -183,7 +128,9 @@ const handleSend = async (e: React.FormEvent) => {
           }
         }
       }
-setMessages(prev => [...prev, { role: 'model', text: responseText }]);
+
+      setMessages(prev => [...prev, { role: 'model', text: responseText }]);
+
     } catch (error: any) {
       console.error("CHI TIẾT LỖI TỪ GOOGLE GEMINI:", error);
       setMessages(prev => [...prev, { 
@@ -227,7 +174,6 @@ setMessages(prev => [...prev, { role: 'model', text: responseText }]);
                       : 'bg-gray-800 text-gray-200 rounded-tl-none border border-gray-700'
                   }`}
                 >
-                  {/* Có thể dùng Markdown renderer ở đây nếu muốn in đậm/in nghiêng tốt hơn */}
                   <span dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>') }} />
                 </div>
               </div>
