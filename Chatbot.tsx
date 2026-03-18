@@ -52,15 +52,12 @@ export default function Chatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<any>(null); // Lưu trữ lịch sử chat để Gemini nhớ context
 
-  // Khởi tạo Chat Session
-// Khởi tạo Chat Session (Đã fix lỗi lịch sử và nạp Google Docs)
   useEffect(() => {
     const initChat = async () => {
       try {
         // 1. LINK API GOOGLE DOCS
         const DOCS_API_URL = "https://script.google.com/macros/s/AKfycbxJ_qc6aUH8g3SKMOdMyr3ibUI3MvWXucXNy98yTJg3LVeKYNW8LP_Tmf94Ch-MZ1n4cw/exec";
         
-        // 2. Tải nội dung từ file Google Docs về
         const res = await fetch(DOCS_API_URL);
         const data = await res.json();
         
