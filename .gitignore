@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Bỏ qua các file biến môi trường chứa API Key nhạy cảm
+.env
+.env.local
+.env.*
